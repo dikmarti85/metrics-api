@@ -1,6 +1,6 @@
 import {Button, Grid, Icon,} from '@mui/material'
-import {styled} from '@mui/system'
-import {Span} from 'app/components/Typography'
+import {Box, styled} from '@mui/system'
+import {Small, Span} from 'app/components/Typography'
 import React, {useEffect, useState} from 'react'
 import {TextValidator, ValidatorForm} from 'react-material-ui-form-validator'
 import AdapterDateFns from '@mui/lab/AdapterDateFns'

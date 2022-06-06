@@ -1,0 +1,1 @@
+(this["webpackJsonpmatx-react"]=this["webpackJsonpmatx-react"]||[]).push([[40],{592:function(e,c,t){"use strict";t.r(c);t(0);var r=t(1);c.default=function(e){var c=e.name,t=e.value;return Object(r.jsx)("div",{children:Object(r.jsxs)("div",{children:[Object(r.jsx)("p",{color:"red",children:c}),Object(r.jsx)("p",{color:"blue",children:t})]})})}}}]);

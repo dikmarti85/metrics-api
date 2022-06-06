@@ -5,7 +5,7 @@ export const navigations = [
     },
     {
         name: 'Load',
-        path: '/metrics/load',
+        path: '/metrics/paginationMetric',
         icon: 'library_books',
     },
     {

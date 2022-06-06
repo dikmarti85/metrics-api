@@ -59,7 +59,7 @@ const AutocompleteCombo = () => {
         console.log('labels X: ' + labelsX)
 
         const swUrl = `https://metrics-351617.rj.r.appspot.com/metrics/`
-        fetch(swUrl)
+        fetch(swUrl,{referrerPolicy: 'same-origin'})
             .then(response => response.json())
             .then(response => {
                 console.log(response)
@@ -68,6 +68,7 @@ const AutocompleteCombo = () => {
 
             })
             .catch((error) => {
+                console.log('url' + swUrl)
                 console.log(
                     'error: ' + error
                 )
