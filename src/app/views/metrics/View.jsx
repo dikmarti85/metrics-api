@@ -1,11 +1,7 @@
 import React, {lazy} from 'react'
-import AutoCompleteCombo from './AutocompleteCombo'
-import {SimpleCard} from 'app/components'
+import CalculateMetricView from './CalculateMetricView'
 import {Box, styled} from '@mui/system'
-import {Button, Icon} from "@mui/material";
-import {Span} from "../../components/Typography";
-import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator'
-import Loadable from "../../components/Loadable/Loadable";
+import { Chart } from "react-google-charts";
 
 const Container = styled('div')(({theme}) => ({
     margin: '30px',
@@ -25,9 +21,7 @@ const View = () => {
     return (
         <Container>
             <div>
-
-               <AutoCompleteCombo/>
-
+               <CalculateMetricView/>
             </div>
         </Container>
     )

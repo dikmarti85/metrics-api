@@ -6,7 +6,6 @@ import {TextValidator, ValidatorForm} from 'react-material-ui-form-validator'
 import AdapterDateFns from '@mui/lab/AdapterDateFns'
 import LocalizationProvider from '@mui/lab/LocalizationProvider'
 import {DatePicker} from '@mui/lab'
-import Result from './Result'
 
 const TextField = styled(TextValidator)(() => ({
     width: '100%',

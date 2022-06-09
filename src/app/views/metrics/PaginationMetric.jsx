@@ -52,7 +52,6 @@ const PaginationMetric = () => {
     const [page, setPage] = React.useState(0)
     const initialValue = []
     const [status, setStatus] = React.useState(false)
-
     const [metrics, setMetrics] = React.useState([]);
     const handleChangePage = (event, newPage) => {
         setPage(newPage)

@@ -7,17 +7,17 @@ const MetricChart = ({ height, color = [], values = []}) => {
 
     const option = {
         grid: {
-            top: '10%',
-            bottom: '10%',
+            top: '5%',
+            bottom: '5%',
             left: '5%',
             right: '5%',
         },
         legend: {
-            itemGap: 20,
+            itemGap: 15,
             icon: 'circle',
             textStyle: {
                 color: theme.palette.text.secondary,
-                fontSize: 13,
+                fontSize: 10,
                 fontFamily: 'roboto',
             },
         },
@@ -33,7 +33,7 @@ const MetricChart = ({ height, color = [], values = []}) => {
             },
             axisLabel: {
                 color: theme.palette.text.secondary,
-                fontSize: 14,
+                fontSize: 10,
                 fontFamily: 'roboto',
             },
         },
@@ -54,7 +54,7 @@ const MetricChart = ({ height, color = [], values = []}) => {
             },
             axisLabel: {
                 color: theme.palette.text.secondary,
-                fontSize: 13,
+                fontSize: 10,
                 fontFamily: 'roboto',
             },
         },
@@ -62,8 +62,8 @@ const MetricChart = ({ height, color = [], values = []}) => {
             {
                 data: [30, 40, 20, 50, 40],
                 type: 'line',
-                stack: 'This month',
-                name: 'This month',
+                stack: 'Sum',
+                name: 'Sum',
                 smooth: true,
                 symbolSize: 4,
                 lineStyle: {
@@ -73,8 +73,8 @@ const MetricChart = ({ height, color = [], values = []}) => {
             {
                 data: [20, 50, 15, 50, 30],
                 type: 'line',
-                stack: 'Last month',
-                name: 'Last month',
+                stack: 'Avg',
+                name: 'Avg',
                 smooth: true,
                 symbolSize: 4,
                 lineStyle: {

@@ -1,5 +1,5 @@
 import React, {lazy} from 'react'
-import AutoCompleteCombo from './AutocompleteCombo'
+import AutoCompleteCombo from './CalculateMetricView'
 import {SimpleCard} from 'app/components'
 import {Box, styled} from '@mui/system'
 import {Button, Icon} from "@mui/material";
