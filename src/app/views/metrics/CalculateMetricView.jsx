@@ -66,171 +66,299 @@ const CalculateMetricView = () => {
         date: new Date(),
     })
 
-    const [disabledDate, setDisabledDate] = React.useState(false)
+    const minDateSelectableMetric = new Date().setFullYear((new Date()).getFullYear() - 1)
+    const [disabledDate, setDisabledDate] = React.useState(true)
     const [disabledTime, setDisabledTime] = React.useState(false)
-    const [selectedValue, setSelectedValue] = React.useState('a')
+    const [selectedValue, setSelectedValue] = React.useState('time')
     const [labelsX, setLabelsX] = React.useState([])
+
+    const [minutesToRender, setMinutesToRender] = React.useState([])
+    const [hoursToRender, setHoursToRender] = React.useState([])
+    const [daysToRender, setDaysToRender] = React.useState([])
+    const [monthsToRender, setMonthsToRender] = React.useState([])
+    const [yearsToRender, setYearsToRender] = React.useState([])
 
     const calculateValuesAxisX = (paramTime) => {
 
         const current = new Date();
         const myPastDate = new Date(current);
         const labels = [];
+        const minutesCalc = [];
+        const hoursCalc = [];
+        const daysCalc = [];
+        const monthCalc = [];
+        const yearsCalc = [];
 
         // 5 minutes
         if (paramTime == 0) {
             myPastDate.setMinutes(myPastDate.getMinutes() - 5)
-            const initialDate = myPastDate;
+            const initialDate = new Date()
+            initialDate.setTime(myPastDate.getTime())
 
             for (var i = 0; i <= 5; i++) {
-                var hour = initialDate.toLocaleString('en-US', {hour: '2-digit'})
-                var minute = initialDate.toLocaleString('en-US', {minute: '2-digit'})
-                labelsX[i] = `${hour}:${minute}`
+                minutesCalc[i] = initialDate.getMinutes()
+                labelsX[i] =  initialDate.toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'});
                 initialDate.setMinutes(initialDate.getMinutes() + 1)
             }
+            setState({
+                ...state,
+                time: 'MIN',
+            })
+            //TODO:set date from
+            console.log('myPastDate: ' + myPastDate)
         }
 
         // 15 minutes
         if (paramTime == 1) {
-            myPastDate.setMinutes(myPastDate.getMinutes() - 15)
-            const initialDate = myPastDate;
 
-            for (var i = 0; i <= 5; i++) {
-                var hour = initialDate.toLocaleString('en-US', {hour: '2-digit'})
-                var minute = initialDate.toLocaleString('en-US', {minute: '2-digit'})
-                labelsX[i] = `${hour}:${minute}`
-                initialDate.setMinutes(initialDate.getMinutes() + 3)
+            myPastDate.setMinutes(myPastDate.getMinutes() - 15)
+            const initialDate = new Date()
+            initialDate.setTime(myPastDate.getTime())
+
+            for (var i = 0; i <= 14; i++) {
+                minutesCalc[i] = initialDate.getMinutes()
+                labelsX[i] = initialDate.toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'});
+                initialDate.setMinutes(initialDate.getMinutes() + 1)
             }
+
+            setState({
+                ...state,
+                time: 'MIN',
+            })
         }
 
         // 30 minutes
         if (paramTime == 2) {
             myPastDate.setMinutes(myPastDate.getMinutes() - 30)
-            const initialDate = myPastDate;
+            const initialDate = new Date()
+            initialDate.setTime(myPastDate.getTime())
 
-            for (var i = 0; i <= 5; i++) {
-                var hour = initialDate.toLocaleString('en-US', {hour: '2-digit'})
-                var minute = initialDate.toLocaleString('en-US', {minute: '2-digit'})
-                labelsX[i] = `${hour}:${minute}`
-                initialDate.setMinutes(initialDate.getMinutes() + 6)
+            for (var i = 0; i <= 29; i++) {
+                minutesCalc[i] = initialDate.getMinutes()
+                var hour = initialDate.toLocaleString('en-GB', {hour: '2-digit'})
+                var minute = ('0' + initialDate.toLocaleString('en-GB', {minute: '2-digit'})).slice(-2)
+
+                if (i==0 || i==14 || i==28) {
+                    labelsX[i] = `${hour} Hrs ${minute}`
+                } else {
+                    labelsX[i] = `${minute}`
+                }
+                initialDate.setMinutes(initialDate.getMinutes() + 1)
             }
+            setState({
+                ...state,
+                time: 'MIN',
+            })
         }
 
         // 1 hour
         if (paramTime == 3) {
             myPastDate.setHours(myPastDate.getHours() - 1)
-            const initialDate = myPastDate;
+            const initialDate = new Date()
+            initialDate.setTime(myPastDate.getTime())
 
-            for (var i = 0; i <= 5; i++) {
-                labelsX[i] = initialDate.toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'});
-                initialDate.setMinutes(initialDate.getMinutes() + 12)
+            for (var i = 0; i <= 59; i++) {
+                minutesCalc[i] = initialDate.getMinutes()
+                var minute =  ('0' + initialDate.toLocaleString('en-GB', {minute: '2-digit'})).slice(-2)
+                if (i==0 || i==30 || i==58 || (initialDate.getMinutes() < (initialDate.getMinutes() - 1))) {
+                    labelsX[i] = initialDate.toLocaleTimeString('en-GB', {hour: '2-digit'}) + ':' + minute
+                } else {
+                    labelsX[i] = minute
+                }
+                initialDate.setMinutes(initialDate.getMinutes() + 1)
             }
+            setState({
+                ...state,
+                time: 'MIN',
+            })
         }
 
         // 4 hour
         if (paramTime == 4) {
             myPastDate.setHours(myPastDate.getHours() - 4)
-            const initialDate = myPastDate;
+            const initialDate = new Date()
+            initialDate.setTime(myPastDate.getTime())
 
-            for (var i = 0; i <= 5; i++) {
+            for (var i = 0; i <= 3; i++) {
+                daysCalc[i] = initialDate.getDate()
+                hoursCalc[i] = initialDate.getHours()
                 labelsX[i] = initialDate.toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'});
-                initialDate.setMinutes(initialDate.getMinutes() + 48)
+                initialDate.setHours(initialDate.getHours() + 1)
             }
+            setState({
+                ...state,
+                time: 'HOUR',
+            })
         }
 
         // 10 hour
         if (paramTime == 5) {
             myPastDate.setHours(myPastDate.getHours() - 10)
-            const initialDate = myPastDate;
+            const initialDate = new Date()
+            initialDate.setTime(myPastDate.getTime())
 
-            for (var i = 0; i <= 5; i++) {
+            for (var i = 0; i <= 9; i++) {
+                daysCalc[i] = initialDate.getDate()
+                hoursCalc[i] = initialDate.getHours()
                 labelsX[i] = initialDate.toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'});
-                initialDate.setMinutes(initialDate.getMinutes() + 120)
+                initialDate.setHours(initialDate.getHours() + 1)
             }
+            setState({
+                ...state,
+                time: 'HOUR',
+            })
         }
 
         // 1 day
         if (paramTime == 6) {
             myPastDate.setDate(myPastDate.getDate() - 1)
-            const initialDate = myPastDate;
+            const initialDate = new Date()
+            initialDate.setTime(myPastDate.getTime())
 
-            for (var i = 0; i <= 8; i++) {
+            for (var i = 0; i <= 23; i++) {
+                daysCalc[i] = initialDate.getDate()
+                hoursCalc[i] = initialDate.getHours()
                 labelsX[i] = initialDate.toLocaleTimeString('en-GB', {
                     weekday: "short",
                     hour: '2-digit',
                     minute: '2-digit'
                 });
-                initialDate.setHours(initialDate.getHours() + 3)
+                initialDate.setHours(initialDate.getHours() + 1)
             }
+            setState({
+                ...state,
+                time: 'HOUR',
+            })
         }
 
         // 2 day
         if (paramTime == 7) {
             myPastDate.setDate(myPastDate.getDate() - 2)
-            const initialDate = myPastDate;
+            const initialDate = new Date()
+            initialDate.setTime(myPastDate.getTime())
 
-            for (var i = 0; i <= 8; i++) {
+            for (var i = 0; i <= 49; i++) {
+                daysCalc[i] = initialDate.getDate()
+                hoursCalc[i] = initialDate.getHours()
                 labelsX[i] = initialDate.toLocaleTimeString('en-GB', {
                     weekday: "short",
                     hour: '2-digit',
                     minute: '2-digit'
                 });
-                initialDate.setHours(initialDate.getHours() + 6)
+                initialDate.setHours(initialDate.getHours() + 1)
             }
+            setState({
+                ...state,
+                time: 'HOUR',
+            })
         }
 
         // 7 day
         if (paramTime == 8) {
             myPastDate.setDate(myPastDate.getDate() - 7)
-            const initialDate = myPastDate;
+            const initialDate = new Date()
+            initialDate.setTime(myPastDate.getTime())
 
-            for (var i = 0; i <= 8; i++) {
+            for (var i = 0; i <= 7; i++) {
+                daysCalc[i] = initialDate.getDate()
+                monthCalc[i] = initialDate.getMonth()
                 labelsX[i] = initialDate.toLocaleTimeString('en-GB', {
                     weekday: "short",
                     hour: '2-digit',
                     minute: '2-digit'
                 });
-                initialDate.setHours(initialDate.getHours() + 21)
+                initialDate.setDate(initialDate.getDate() + 1)
             }
+            setState({
+                ...state,
+                time: 'DAY',
+            })
         }
 
         // 1 month
         if (paramTime == 9) {
+            var currentMonth = new Date()
             myPastDate.setMonth(myPastDate.getMonth() - 1)
-            const initialDate = myPastDate;
+            const initialDate = new Date()
+            initialDate.setTime(myPastDate.getTime())
 
-            for (var i = 0; i <= 4; i++) {
+            var time = currentMonth.getTime() - myPastDate.getTime()
+            var days = time / (1000 * 3600 * 24);
+
+            for (var i = 0; i <= days; i++) {
+                daysCalc[i] = initialDate.getDate()
+                monthCalc[i] = initialDate.getMonth()
                 var month = initialDate.toLocaleString('en-GB', {month: "short"})
                 labelsX[i] = `${initialDate.getDate()} ${month}`
-                initialDate.setHours(initialDate.getHours() + 180)
+                initialDate.setDate(initialDate.getDate() + 1)
             }
+            setState({
+                ...state,
+                time: 'DAY',
+            })
         }
 
         // 3 month
         if (paramTime == 10) {
+            var currentMonth = new Date()
             myPastDate.setMonth(myPastDate.getMonth() - 3)
-            const initialDate = myPastDate;
+            const initialDate = new Date()
+            initialDate.setTime(myPastDate.getTime())
 
-            for (var i = 0; i <= 6; i++) {
+            var time = currentMonth.getTime() - myPastDate.getTime()
+            var days = time / (1000 * 3600 * 24);
+
+            for (var i = 0; i <= days; i++) {
+                daysCalc[i] = initialDate.getDate()
+                monthCalc[i] = initialDate.getMonth()
                 var month = initialDate.toLocaleString('en-GB', {month: "short"})
                 labelsX[i] = `${initialDate.getDate()} ${month}`
-                initialDate.setDate(initialDate.getDate() + 15)
+                initialDate.setDate(initialDate.getDate() + 1)
             }
+            setState({
+                ...state,
+                time: 'DAY',
+            })
         }
 
         // 1 year
         if (paramTime == 11) {
             myPastDate.setFullYear(myPastDate.getFullYear() - 1)
-            const initialDate = myPastDate;
+            const initialDate = new Date()
+            initialDate.setTime(myPastDate.getTime())
 
             for (var i = 0; i <= 12; i++) {
+                yearsCalc[i] = initialDate.getFullYear()
+                monthCalc[i] = initialDate.getMonth()
                 var month = initialDate.toLocaleString('en-GB', {month: "short"})
                 labelsX[i] = `${initialDate.getFullYear()}/${month}`
                 initialDate.setMonth(initialDate.getMonth() + 1)
             }
+            setState({
+                ...state,
+                time: 'MONTH',
+            })
         }
 
         setLabelsX(labels)
+        console.log('LabelsX: ' + labelsX)
+
+        console.log('myPastDate FINAL: ' + myPastDate)
+
+        setMinutesToRender(minutesCalc)
+        setHoursToRender(hoursCalc)
+        setDaysToRender(daysCalc)
+        setMonthsToRender(monthCalc)
+        setYearsToRender(yearsCalc)
+
+        setState({
+            ...state,
+            date: myPastDate,
+            dateEnd: current,
+        })
+
+        console.log('date from: ' + date)
+        console.log('date end: ' + dateEnd)
     }
 
     const handleComboMetricChange = (event, newValue) => {
@@ -253,12 +381,10 @@ const CalculateMetricView = () => {
             })
             return
         }
-        setState({
-            ...state,
-            time: newValue.value,
-        })
 
         calculateValuesAxisX(newValue.value)
+
+        setSource(labelsX);
 
     }
 
@@ -289,6 +415,7 @@ const CalculateMetricView = () => {
     const handleSubmit = (event) => {
 
         console.log('date: ' + date);
+        console.log('dateEnd: ' + dateEnd);
         console.log('timeType: ' + time)
         console.log('metricName: ' + metricName)
 
@@ -313,7 +440,7 @@ const CalculateMetricView = () => {
                 setSource(response.labels)
             });
 
-        setDisabledDate(false)
+        setDisabledDate(true)
         setDisabledTime(false)
 
     }
@@ -371,6 +498,7 @@ const CalculateMetricView = () => {
                                 <Grid item xs={8}>
                                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                                         <DatePicker
+                                            minDate={minDateSelectableMetric}
                                             disabled={disabledDate}
                                             inputFormat="dd/MM/yyyy"
                                             value={date}
@@ -390,6 +518,7 @@ const CalculateMetricView = () => {
                                 <Grid item xs={8}>
                                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                                         <DatePicker
+                                            minDate={minDateSelectableMetric}
                                             disabled={disabledDate}
                                             inputFormat="dd/MM/yyyy"
                                             value={date}
@@ -475,8 +604,6 @@ const CalculateMetricView = () => {
                             </Grid>
                         </Grid>
                     </div>
-
-
                 </ValidatorForm>
             </Box>
             <Box py="20px"/>
