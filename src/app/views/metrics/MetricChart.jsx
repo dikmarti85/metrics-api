@@ -2,7 +2,7 @@ import React from 'react'
 import { useTheme } from '@mui/system'
 import ReactEcharts from 'echarts-for-react'
 
-const MetricChart = ({ height, color = [], values = []}) => {
+const MetricChart = ({ height, color = [], values = [], listAvg}) => {
     const theme = useTheme()
 
     const option = {
@@ -60,18 +60,7 @@ const MetricChart = ({ height, color = [], values = []}) => {
         },
         series: [
             {
-                data: [30, 40, 20, 50, 40,30, 40, 20, 50, 40,30, 40, 20, 50, 40,30, 40, 20, 50, 40,30, 40, 20, 50, 40,30, 40, 20, 50, 40,],
-                type: 'line',
-                stack: 'Sum',
-                name: 'Sum',
-                smooth: true,
-                symbolSize: 4,
-                lineStyle: {
-                    width: 4,
-                },
-            },
-            {
-                data: [20, 50, 15, 50, 30,20, 50, 15, 50, 30,20, 50, 15, 50, 30,20, 50, 15, 50, 30,20, 50, 15, 50, 30,20, 50, 15, 50, 30,],
+                data: listAvg,
                 type: 'line',
                 stack: 'Avg',
                 name: 'Avg',
