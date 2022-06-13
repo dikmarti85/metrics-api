@@ -1,11 +1,5 @@
-import React, {lazy} from 'react'
-import AutoCompleteCombo from './CalculateMetricView'
-import {SimpleCard} from 'app/components'
-import {Box, styled} from '@mui/system'
-import {Button, Icon} from "@mui/material";
-import {Span} from "../../components/Typography";
-import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator'
-import Loadable from "../../components/Loadable/Loadable";
+import React from 'react'
+import {styled} from '@mui/system'
 import MetricForm from "./MetricForm";
 
 const Container = styled('div')(({theme}) => ({
@@ -25,7 +19,7 @@ const Load = () => {
     return (
         <Container>
             <div>
-               <MetricForm/>
+                <MetricForm/>
             </div>
         </Container>
     )

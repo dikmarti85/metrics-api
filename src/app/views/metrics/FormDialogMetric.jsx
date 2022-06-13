@@ -1,15 +1,12 @@
 import React, {useState} from 'react'
-import {Button, Grid, Icon,} from '@mui/material'
+import {Button,} from '@mui/material'
 import TextField from '@mui/material/TextField'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
-import LocalizationProvider from '@mui/lab/LocalizationProvider'
 import DialogTitle from '@mui/material/DialogTitle'
-import {DatePicker} from "@mui/lab";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
 
-export default function FormDialogMetric (metric){
+export default function FormDialogMetric(metricFunction) {
     const [open, setOpen] = React.useState(false)
     const [state, setState] = useState({
         date: new Date(),
@@ -33,7 +30,7 @@ export default function FormDialogMetric (metric){
         fetch(url, {
             method: 'POST',
             body: JSON.stringify(data),
-            headers:{
+            headers: {
                 'Content-Type': 'application/json'
             }
         }).then(res => res.json())
@@ -51,7 +48,7 @@ export default function FormDialogMetric (metric){
         })
     }
 
-    const reload=()=>window.location.reload();
+    const reload = () => window.location.reload();
 
     const {
         name,
@@ -73,21 +70,21 @@ export default function FormDialogMetric (metric){
             >
                 <DialogTitle id="form-dialog-title">Add Metric</DialogTitle>
                 <DialogContent>
-                        <TextField
-                            autoFocus
-                            onChange={handleChange}
-                            margin="dense"
-                            id="name"
-                            label="Name"
-                            type="text"
-                            name="name"
-                            fullWidth={true}
-                            value={name}
-                            validators={['required']}
-                            errorMessages={[
-                                'this field is required'
-                            ]}
-                        />
+                    <TextField
+                        autoFocus
+                        onChange={handleChange}
+                        margin="dense"
+                        id="name"
+                        label="Name"
+                        type="text"
+                        name="name"
+                        fullWidth={true}
+                        value={name}
+                        validators={['required']}
+                        errorMessages={[
+                            'this field is required'
+                        ]}
+                    />
                 </DialogContent>
 
                 <DialogActions>
