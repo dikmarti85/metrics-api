@@ -63,6 +63,7 @@ const CalculateMetricView = () => {
     const [avg, setAvg] = React.useState([])
     const [valueComboTime, setValueComboTime] = React.useState(null)
     const [valueComboMetric, setValueComboMetric] = React.useState(null)
+    const [findSuccess, setFindSuccess] = React.useState(false)
     const [state, setState] = useState({
         date: new Date(),
         dateEnd: new Date(),
@@ -75,6 +76,7 @@ const CalculateMetricView = () => {
     const [selectedValue, setSelectedValue] = React.useState('time')
     const [labelsX, setLabelsX] = React.useState([])
     const [errorTime, setErrorTime] = React.useState('')
+    const [errorRange, setErrorRange] = React.useState('')
     const [errorMetricName, setErrorMetricName] = React.useState('')
 
     const [minutesToRender, setMinutesToRender] = React.useState([])
@@ -102,7 +104,6 @@ const CalculateMetricView = () => {
         for (var i = 0; i <= len; i++) {
             labelsX[i] = null;
         }
-        console.log('CLEAR labelsX' + labelsX)
 
         // 5 minutes
         if (paramTime == 0) {
@@ -303,9 +304,6 @@ const CalculateMetricView = () => {
         }
 
         setLabelsX(labels)
-        console.log('LabelsX: ' + labelsX)
-        console.log('myPastDate FINAL: ' + myPastDate)
-
         setMinutesToRender(minutesCalc)
         setHoursToRender(hoursCalc)
         setDaysToRender(daysCalc)
@@ -321,10 +319,6 @@ const CalculateMetricView = () => {
         setTimeParam(timeP[0])
         setTimeParamPrev(timeP[0])
 
-        console.log('timeP: ' + timeP[0])
-        console.log('timeParam: ' + timeParam)
-        console.log('date from: ' + date)
-        console.log('date end: ' + dateEnd)
     }
 
     const handleComboMetricChange = (event, newValue) => {
@@ -361,8 +355,6 @@ const CalculateMetricView = () => {
         days = Math.trunc(days)
         var months = difference / (1000 * 3600 * 24 * 30);
         months = Math.trunc(months)
-        console.log('days: ' + days)
-        console.log('months: ' + months)
 
         if (days == 0) {
             initialDate.setTime(date.getTime())
@@ -436,12 +428,9 @@ const CalculateMetricView = () => {
 
         if (days > 93) {
             initialDate.setTime(date.getTime())
-
-            console.log(' initialDate' +  initialDate)
             for (var i = 0; i <= months; i++) {
                 yearsCalc[i] = initialDate.getFullYear()
                 monthCalc[i] = initialDate.getMonth() + 1
-                console.log(' initialDate.getMonth()' +  initialDate.getMonth())
                 var month = initialDate.toLocaleString('en-GB', {month: "short"})
                 labelsX[i] = `${initialDate.getFullYear()}/${month}`
                 initialDate.setMonth(initialDate.getMonth() + 1)
@@ -464,16 +453,11 @@ const CalculateMetricView = () => {
         setDaysToRender(daysCalc)
         setMonthsToRender(monthCalc)
         setYearsToRender(yearsCalc)
-        setSource(labelsX);
-        console.log("calc by range labelsX: " + labelsX)
-        console.log("calc by range monthCalc: " + monthCalc)
-        console.log("calc by range monthCalc: " + yearsCalc)
+        //setSource(labelsX);
     }
 
     const handleComboTimeChange = (event, newValue) => {
         if (newValue && newValue.inputValue) {
-            console.log('SET AFTER COMBO VALUE' + valueComboTime)
-            console.log('SET AFTER COMBO VALUE newValue.inputValue' + newValue.inputValue)
             setValueComboTime({
                 label: newValue.inputValue,
             })
@@ -481,7 +465,7 @@ const CalculateMetricView = () => {
         } else {
             if (newValue != null) {
                 calculateValuesAxisX(newValue.value)
-                setSource(labelsX);
+                //setSource(labelsX);
             }
         }
 
@@ -497,10 +481,6 @@ const CalculateMetricView = () => {
 
     function handleRadioChange(event) {
         setSelectedValue(event.target.value)
-
-        console.log('valueComboTime:' + valueComboTime)
-        console.log('On radio timeParamPrev:' + timeParamPrev)
-        console.log('On radio timeParam:' + timeParam)
 
         if (event.target.value == 'time') {
             setDisabledDate(true)
@@ -545,12 +525,20 @@ const CalculateMetricView = () => {
 
         setErrorMetricName('')
         setErrorTime('')
+        setErrorRange('')
+        setFindSuccess(false)
 
         const timeByRange = []
         if (!disabledDate) {
-            time = calculateValuesByRangeX()
-            timeByRange[0] = time[0]
-            setSource(labelsX);
+
+            if(date.getTime() > dateEnd.getTime()){
+                setErrorRange('*Invalid range')
+                error = true;
+            } else {
+                time = calculateValuesByRangeX()
+                timeByRange[0] = time[0]
+              //  setSource(labelsX);
+            }
         } else {
             timeByRange[0] = timeParam
         }
@@ -569,8 +557,7 @@ const CalculateMetricView = () => {
 
         if (error === true) return;
 
-        console.log('labels on submit: ' + labelsX);
-        console.log('source on submit: ' + source);
+        setSource(labelsX);
 
         var url = 'https://metrics-351617.rj.r.appspot.com/metrics/calc';
         var data = {
@@ -595,6 +582,7 @@ const CalculateMetricView = () => {
                 } else {
                     setAvg(buildMetricsCalc(response, data.timeType, time[1], time[2], time[3], time[4], time[5]))
                 }
+                setFindSuccess(true)
             });
 
     }
@@ -619,23 +607,18 @@ const CalculateMetricView = () => {
 
             minutesToRender.forEach((el, index) => {
                 var filtered = null;
-                console.log(el)
                 data.minutes.forEach((obj, ind) => {
                     if (el == obj) {
                         j = ind
                         filtered = obj
                     }
                 })
-                console.log('index: ' + index)
-                console.log('filtered: ' + filtered)
-                console.log('j : ' + j)
                 if (filtered != null) {
                     calc[index] = data.avgs[j];
                 } else {
                     calc[index] = '0';
                 }
             })
-            console.log('calc: ' + calc)
             return calc;
         }
 
@@ -644,22 +627,18 @@ const CalculateMetricView = () => {
 
             hoursToRender.forEach((el, index) => {
                 var filtered = null;
-                console.log(el)
                 for (var i = 0; i < data.hours.length; i++) {
                     if (el == data.hours[i] && daysToRender[index] == data.days[i]) {
                         j = i
                         filtered = data.hours[i]
                     }
                 }
-                console.log('index: ' + index)
-                console.log('filtered: ' + filtered)
                 if (filtered != null) {
                     calc[index] = data.avgs[j];
                 } else {
                     calc[index] = '0';
                 }
             })
-            console.log('calc: ' + calc)
             return calc;
         }
 
@@ -669,52 +648,37 @@ const CalculateMetricView = () => {
 
             daysToRender.forEach((el, index) => {
                 var filtered = null;
-                console.log(el)
                 for (var i = 0; i < data.days.length; i++) {
                     if (el == data.days[i] && monthsToRender[index] == data.months[i]) {
                         j = i
                         filtered = data.days[i]
                     }
                 }
-                console.log('index: ' + index)
-                console.log('filtered: ' + filtered)
                 if (filtered != null) {
                     calc[index] = data.avgs[j];
                 } else {
                     calc[index] = '0';
                 }
             })
-            console.log('calc: ' + calc)
             return calc;
         }
 
         if (timeType == 'MONTH') {
-
             var j = 0
-
-            console.log('yearsToRender: ' + yearsToRender)
-            console.log('monthsToRender: ' + monthsToRender)
-            console.log('data.years: ' + data.years)
-            console.log('data.months: ' + data.months)
-
             monthsToRender.forEach((el, index) => {
                 var filtered = null;
-                console.log(el)
                 for (var i = 0; i < data.months.length; i++) {
                     if (el == data.months[i] && yearsToRender[index] == data.years[i]) {
                         j = i
                         filtered = data.months[i]
                     }
                 }
-                console.log('index: ' + index)
-                console.log('filtered: ' + filtered)
                 if (filtered != null) {
                     calc[index] = data.avgs[j];
                 } else {
                     calc[index] = '0';
                 }
             })
-            console.log('calc: ' + calc)
             return calc;
         }
 
@@ -810,6 +774,10 @@ const CalculateMetricView = () => {
                                             )}
                                         />
                                     </LocalizationProvider>
+                                    <Grid id={'errorRange'} item xs={6} alignItems={"center"}
+                                          style={{color: 'red'}}>
+                                        {errorRange}
+                                    </Grid>
                                 </Grid>
                             </Grid>
                             <Grid container direction="column" item xs={1} spacing={1}>
@@ -888,7 +856,7 @@ const CalculateMetricView = () => {
             </Box>
             <Box py="20px"/>
 
-            {
+            {findSuccess ? (
                 <MetricChart
                     height="350px"
                     color={[
@@ -898,7 +866,9 @@ const CalculateMetricView = () => {
                     values={source}
                     listAvg={avg}
                 />
-            }
+            ) : (
+                <div></div>
+            )}
         </Fragment>
 
     )

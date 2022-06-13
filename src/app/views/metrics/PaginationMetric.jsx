@@ -2,13 +2,16 @@ import {Button, Table, TableBody, TableCell, TableHead, TablePagination, TableRo
 import React, {useEffect, useState} from "react";
 import {Box, styled} from '@mui/system'
 import {SimpleCard} from 'app/components'
-import FormDialogMetricValue from "./FormDialogMetricValue";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
 import DialogActions from "@mui/material/DialogActions";
 import LoadingSpinner from "./LoadingSpinner";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import {DatePicker} from "@mui/lab";
+import "./css/Modal.css";
 
 const Container = styled('div')(({theme}) => ({
     margin: '30px',
@@ -51,27 +54,31 @@ const PaginationMetric = () => {
     const [metrics, setMetrics] = React.useState([]);
     const [open, setOpen] = React.useState(false)
     const [errorName, setErrorName] = React.useState('')
+    const [openMetricValue, setOpenMetricValue] = React.useState(false)
+    const [successMetricValue, setSuccessMetricValue] = React.useState(false)
+    const [stateMetricValue, setStateMetricValue] = useState({
+        date: new Date(),
+    })
+
     const [state, setState] = useState({
         date: new Date(),
         loading: false,
     })
 
+    function handleCloseModal() {
+        setSuccessMetricValue(false)
+    }
+
     const handleChangePage = (event, newPage) => {
         setPage(newPage)
     }
-
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(+event.target.value)
         setPage(0)
     }
 
-    const handleClickMetric = (metricId) => {
-        console.log(metricId)
-    }
-
     const getData = async (loading) => {
         if (!status || (loading != null && loading)) {
-            console.log('in request ')
             const resp = await fetch("https://metrics-351617.rj.r.appspot.com/metrics/");
             const data = await resp.json();
             setMetrics(data.content);
@@ -90,7 +97,6 @@ const PaginationMetric = () => {
             ...state,
             name: '',
         })
-
     }
 
     function handleClose() {
@@ -142,14 +148,87 @@ const PaginationMetric = () => {
         })
     }
 
-    const reload = () => window.location.reload();
-
     const {
         name,
     } = state
 
+    function handleClickOpenMetricValue() {
+        setOpenMetricValue(true)
+    }
+
+    function handleCloseMetricValue() {
+        setOpenMetricValue(false)
+    }
+
+    function handleSendMetricValue(valueParam, dateParam, metric) {
+        setOpenMetricValue(false)
+        var url = 'https://metrics-351617.rj.r.appspot.com/metrics/value';
+        var data = {
+            value: valueParam,
+            time: dateParam,
+            metric: {id: metric}
+        };
+
+        fetch(url, {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json())
+            .catch(error => console.error('Error:', error))
+            .then(response => {
+                console.log('Success:', response)
+                setSuccessMetricValue(true)
+            });
+
+    }
+
+    const handleChangeMetricValue = (event) => {
+        event.persist()
+        setStateMetricValue({
+            ...stateMetricValue,
+            [event.target.name]: event.target.value,
+        })
+    }
+
+    const handleDateChangeMetricValue = (date) => {
+        setStateMetricValue({...stateMetricValue, date})
+    }
+
+
+    const {
+        value,
+        date,
+    } = stateMetricValue
+
     return (
         <Container>
+            <div>
+                <Dialog
+                    open={successMetricValue}
+                    onClose={handleCloseModal}
+                    aria-labelledby="form-dialog-title"
+                >
+                    <DialogContent>
+                        <div id="success_tic" className="modal fade" role="dialog">
+                            <div className="modal-dialog">
+                                <div className="modal-content">
+                                    <div className="page-body">
+                                        <div className="head">
+                                            <h4>Metric Value added successfully</h4>
+                                        </div>
+                                        <div className="checkmark-circle" style={{marginLeft: '30px'}}>
+                                            <div className="background"></div>
+                                            <div className="checkmark draw"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </DialogContent>
+                </Dialog>
+            </div>
             <Box py="12px"/>
             <div>
                 <div style={{display: 'flex'}}>
@@ -183,10 +262,6 @@ const PaginationMetric = () => {
                             name="name"
                             fullWidth={true}
                             value={name}
-                            validators={['required']}
-                            errorMessages={[
-                                'this field is required'
-                            ]}
                         />
                         <div id={'errorMetric'} item xs={2} alignItems={"center"}
                              style={{color: 'red', paddingLeft: '15px', paddingTop: '60px'}}>
@@ -227,7 +302,68 @@ const PaginationMetric = () => {
                                         {metric.name}
                                     </TableCell>
                                     <TableCell>
-                                        <FormDialogMetricValue metric={metric.id}/>
+                                        <div>
+                                            <Button
+                                                variant="outlined"
+                                                color="primary"
+                                                onClick={handleClickOpenMetricValue}
+                                            >
+                                                Add Metric Value
+                                            </Button>
+                                            <Dialog
+                                                open={openMetricValue}
+                                                onClose={handleCloseMetricValue}
+                                                aria-labelledby="form-dialog-title"
+                                            >
+                                                <DialogTitle id="form-dialog-title">Add Metric Value</DialogTitle>
+                                                <DialogContent>
+
+                                                    <TextField
+                                                        autoFocus
+                                                        onChange={handleChangeMetricValue}
+                                                        margin="dense"
+                                                        id="value"
+                                                        label="Value"
+                                                        type="text"
+                                                        name="value"
+                                                        fullWidth={true}
+                                                        value={value}
+                                                    />
+                                                    <div><br/></div>
+                                                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                                        <DatePicker
+                                                            value={date}
+                                                            onChange={handleDateChangeMetricValue}
+                                                            renderInput={(props) => (
+                                                                <TextField
+                                                                    {...props}
+                                                                    // variant="Outlined"
+                                                                    id="mui-pickers-date"
+                                                                    label="Date"
+                                                                    sx={{mb: 2, width: '100%'}}
+                                                                />
+                                                            )}
+                                                        />
+                                                    </LocalizationProvider>
+
+                                                </DialogContent>
+
+                                                <DialogActions>
+                                                    <Button
+                                                        variant="outlined"
+                                                        color="secondary"
+                                                        onClick={handleCloseMetricValue}
+                                                    >
+                                                        Cancel
+                                                    </Button>
+                                                    <Button
+                                                        onClick={() => handleSendMetricValue(value, date, `${metric.id}`)}
+                                                        color="primary">
+                                                        Send
+                                                    </Button>
+                                                </DialogActions>
+                                            </Dialog>
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -255,5 +391,4 @@ const PaginationMetric = () => {
         </Container>
     )
 }
-
 export default PaginationMetric
