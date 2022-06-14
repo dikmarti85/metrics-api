@@ -53,8 +53,8 @@ const JwtLogin = () => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
     const [userInfo, setUserInfo] = useState({
-        email: 'sadmin@metrics.com',
-        password: 'dummyPass',
+        email: '',
+        password: '',
     })
     const [message, setMessage] = useState('')
     const { login } = useAuth()
@@ -88,7 +88,7 @@ const JwtLogin = () => {
                     <Grid item lg={5} md={5} sm={5} xs={12}>
                         <JustifyBox p={4} height="100%">
                             <IMG
-                                src="/assets/images/illustrations/dreamer.svg"
+                                src="/assets/images/illustrations/1.svg"
                                 alt=""
                             />
                         </JustifyBox>
@@ -169,24 +169,8 @@ const JwtLogin = () => {
                                             />
                                         )}
                                     </Box>
-                                    <Span sx={{ mr: 1, ml: '20px' }}>or</Span>
-                                    <Button
-                                        sx={{ textTransform: 'capitalize' }}
-                                        onClick={() =>
-                                            navigate('/session/signup')
-                                        }
-                                    >
-                                        Sign up
-                                    </Button>
                                 </FlexBox>
-                                <Button
-                                    sx={{ color: textPrimary }}
-                                    onClick={() =>
-                                        navigate('/session/forgot-password')
-                                    }
-                                >
-                                    Forgot password?
-                                </Button>
+
                             </ValidatorForm>
                         </ContentBox>
                     </Grid>
