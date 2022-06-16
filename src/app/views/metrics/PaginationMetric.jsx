@@ -79,10 +79,18 @@ const PaginationMetric = () => {
 
     const getData = async (loading) => {
         if (!status || (loading != null && loading)) {
+            setState({
+                ...state,
+                loading: true,
+            })
             const resp = await fetch("https://metrics-351617.rj.r.appspot.com/metrics/");
             const data = await resp.json();
             setMetrics(data.content);
             setStatus(true);
+            setState({
+                ...state,
+                loading: false,
+            })
         }
     };
 
@@ -154,6 +162,7 @@ const PaginationMetric = () => {
 
     function handleClickOpenMetricValue() {
         setOpenMetricValue(true)
+        setErrorName('')
     }
 
     function handleCloseMetricValue() {
@@ -161,26 +170,32 @@ const PaginationMetric = () => {
     }
 
     function handleSendMetricValue(valueParam, dateParam, metric) {
-        setOpenMetricValue(false)
-        var url = 'https://metrics-351617.rj.r.appspot.com/metrics/value';
-        var data = {
-            value: valueParam,
-            time: dateParam,
-            metric: {id: metric}
-        };
+        setErrorName('')
 
-        fetch(url, {
-            method: 'POST',
-            body: JSON.stringify(data),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(res => res.json())
-            .catch(error => console.error('Error:', error))
-            .then(response => {
-                console.log('Success:', response)
-                setSuccessMetricValue(true)
-            });
+        if (valueParam == null || (valueParam != null && valueParam.length == 0)) {
+            setErrorName('*Required')
+        } else {
+            setOpenMetricValue(false)
+            var url = 'https://metrics-351617.rj.r.appspot.com/metrics/value';
+            var data = {
+                value: valueParam,
+                time: dateParam,
+                metric: {id: metric}
+            };
+
+            fetch(url, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(res => res.json())
+                .catch(error => console.error('Error:', error))
+                .then(response => {
+                    console.log('Success:', response)
+                    setSuccessMetricValue(true)
+                });
+        }
 
     }
 
@@ -329,7 +344,11 @@ const PaginationMetric = () => {
                                                         fullWidth={true}
                                                         value={value}
                                                     />
-                                                    <div><br/></div>
+                                                    <div id={'errorMetric'} item xs={2} alignItems={"center"}
+                                                         style={{color: 'red', paddingLeft: '15px', paddingTop: '5px', paddingBottom: '15px'}}>
+                                                        {errorName}
+                                                    </div>
+
                                                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                                                         <DatePicker
                                                             value={date}
