@@ -10,6 +10,7 @@ import {Span} from "../../components/Typography";
 import {createFilterOptions} from '@mui/material/Autocomplete'
 import Radio from "@mui/material/Radio";
 import {green} from "@mui/material/colors";
+import LoadingSpinner from "./LoadingSpinner";
 
 const MetricChart = Loadable(lazy(() => import("./MetricChart")))
 
@@ -67,6 +68,7 @@ const CalculateMetricView = () => {
     const [state, setState] = useState({
         date: new Date(),
         dateEnd: new Date(),
+        loading: false,
     })
 
     const minDateSelectableMetric = new Date().setFullYear((new Date()).getFullYear() - 1)
@@ -453,7 +455,7 @@ const CalculateMetricView = () => {
         setDaysToRender(daysCalc)
         setMonthsToRender(monthCalc)
         setYearsToRender(yearsCalc)
-        //setSource(labelsX);
+        setSource(labelsX);
     }
 
     const handleComboTimeChange = (event, newValue) => {
@@ -465,7 +467,7 @@ const CalculateMetricView = () => {
         } else {
             if (newValue != null) {
                 calculateValuesAxisX(newValue.value)
-                //setSource(labelsX);
+                setSource(labelsX);
             }
         }
 
@@ -519,6 +521,8 @@ const CalculateMetricView = () => {
         console.log('dateEnd: ' + dateEnd);
         console.log('timeType: ' + timeParam)
         console.log('metricName: ' + metricName)
+        console.log('source: ' + source)
+        console.log('labelsX: ' + labelsX)
 
         var error = false;
         var time = [];
@@ -537,7 +541,7 @@ const CalculateMetricView = () => {
             } else {
                 time = calculateValuesByRangeX()
                 timeByRange[0] = time[0]
-              //  setSource(labelsX);
+                 setSource(labelsX);
             }
         } else {
             timeByRange[0] = timeParam
@@ -557,7 +561,10 @@ const CalculateMetricView = () => {
 
         if (error === true) return;
 
-        setSource(labelsX);
+        setState({
+            ...state,
+            loading: true,
+        })
 
         var url = 'https://metrics-351617.rj.r.appspot.com/metrics/calc';
         var data = {
@@ -583,6 +590,10 @@ const CalculateMetricView = () => {
                     setAvg(buildMetricsCalc(response, data.timeType, time[1], time[2], time[3], time[4], time[5]))
                 }
                 setFindSuccess(true)
+                setState({
+                    ...state,
+                    loading: false,
+                })
             });
 
     }
@@ -850,11 +861,24 @@ const CalculateMetricView = () => {
                                     </Button>
                                 </Grid>
                             </Grid>
+                            <Grid container direction="column" item xs={1} spacing={1}>
+                                <Grid id={'errorTime'} item xs={2} alignItems={"center"}
+                                      style={{color: 'red', paddingLeft: '15px', paddingTop: '25px'}}>
+
+                                </Grid>
+                                <Grid id={'errorMetric'} item xs={1} alignItems={"center"}
+                                      style={{color: 'red', paddingLeft: '15px', paddingTop: '60px'}}>
+
+                                </Grid>
+                            </Grid>
                         </Grid>
                     </div>
                 </ValidatorForm>
             </Box>
             <Box py="20px"/>
+            <div style={{padding: '1em', marginLeft:'40%'}}>
+                {state.loading ? <LoadingSpinner/> : ''}
+            </div>
 
             {findSuccess ? (
                 <MetricChart
